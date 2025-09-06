@@ -1,0 +1,52 @@
+{
+  "deals": [
+    {
+      "id": 1,
+      "clientName": "John Doe",
+      "productName": "Product A",
+      "stage": "Lead Generated",
+      "createdAt": "2025-09-01"
+    },
+    {
+      "id": 2,
+      "clientName": "Jane Smith",
+      "productName": "Product B",
+      "stage": "Contacted",
+      "createdAt": "2025-09-02"
+    },
+    {
+      "id": "427f",
+      "clientName": "Test Deal",
+      "productName": "Product d",
+      "stage": "Completed",
+      "createdAt": "2025-09-06T10:21:23.591Z"
+    },
+    {
+      "id": "a4c7",
+      "clientName": "Faruq Deal",
+      "productName": "Product e",
+      "stage": "Application Submitted",
+      "createdAt": "2025-09-06T10:21:23.591Z"
+    }
+  ],
+  "clients": [
+    {
+      "id": 1,
+      "name": "John Doe"
+    },
+    {
+      "id": 2,
+      "name": "Jane Smith"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Product A"
+    },
+    {
+      "id": 2,
+      "name": "Product B"
+    }
+  ]
+}
