@@ -1,7 +1,7 @@
 "use client"
 import { useDealStore } from '@/store/useDealStore';
 import axios from 'axios';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 type DealFormState = {
     clientName: string;
@@ -31,10 +31,14 @@ function CreateDealModal({ isOpen, onClose }: Props) {
     })
     const [product, setProduct] = useState<ProductState | null>(null)
 
-
-    const handleProduct = async () => {
+   useEffect(() => {
+     const fetchProduct = async () => {
        const response = await axios.get("http://localhost:4000/products");
+         setProduct(response.data);
     }
+    fetchProduct();
+   }, [])
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
