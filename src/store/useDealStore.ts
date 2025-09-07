@@ -32,7 +32,7 @@ setKanbanMetadataVisible: (key: keyof MetadataVisible, value: boolean) =>
             const response = await axios.get("http://localhost:4000/deals");
             set({ deals: response.data, loading: false });
         } catch {
-            set({ error: "Failed to fetch deals", loading: false });
+            set({ deals: [], error: "Failed to fetch deals", loading: false });
         }
     },
     // fetch clients function
