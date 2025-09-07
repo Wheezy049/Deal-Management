@@ -56,7 +56,7 @@ function Deal() {
             </div>
             {/* conditional rendering of table or kanban */}
             {
-                currentView === "kanban" ? <KanbanBoard /> : <DealTable setIsUpdateOpen={setIsUpdateOpen} setIsViewOpen={setIsViewOpen} setSelectedDeal={setSelectedDeal} />
+                currentView === "kanban" ? <KanbanBoard setIsUpdateOpen={setIsUpdateOpen} setIsViewOpen={setIsViewOpen} setSelectedDeal={setSelectedDeal} /> : <DealTable setIsUpdateOpen={setIsUpdateOpen} setIsViewOpen={setIsViewOpen} setSelectedDeal={setSelectedDeal} />
             }
 
             {/* create deal modal */}

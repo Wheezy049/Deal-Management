@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
-import { DealState } from "@/types/deals";
+import { DealState, MetadataVisible } from "@/types/deals";
+
 
 // create the zustand store
 export const useDealStore = create<DealState>((set) => ({
@@ -14,6 +15,16 @@ export const useDealStore = create<DealState>((set) => ({
         set({ currentView: view });
         localStorage.setItem('dealCurrentView', view);
     },
+    kanbanMetadataVisible: {
+  clientName: true,
+  productName: true,
+  createdAt: true,
+},
+setKanbanMetadataVisible: (key: keyof MetadataVisible, value: boolean) =>
+  set((state) => ({
+    kanbanMetadataVisible: { ...state.kanbanMetadataVisible, [key]: value }
+  })),
+
     // fetch deals function
     fetchDeals: async () => {
         set({ loading: true, error: null });

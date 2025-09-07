@@ -4,17 +4,9 @@
       "id": "1",
       "clientName": "John Doe",
       "productName": "Product A",
-      "stage": "Lead Generated",
+      "stage": "Contacted",
       "createdAt": "2025-09-01",
       "description": "go"
-    },
-    {
-      "id": "2",
-      "clientName": "Jane Smith",
-      "productName": "Product B",
-      "stage": "Contacted",
-      "createdAt": "2025-09-02",
-      "description": ""
     },
     {
       "id": "427f",
@@ -23,14 +15,6 @@
       "stage": "Lost",
       "createdAt": "2025-09-06T10:21:23.591Z",
       "description": "go"
-    },
-    {
-      "id": "473c",
-      "clientName": "Jane Smith",
-      "productName": "Product A",
-      "stage": "Application Submitted",
-      "createdAt": "2025-09-06T23:44:28.188Z",
-      "description": "jane"
     },
     {
       "id": "3200",
@@ -49,6 +33,18 @@
     {
       "id": 2,
       "name": "Jane Smith"
+    },
+    {
+      "id": 3,
+      "name": "Alice Johnson"
+    },
+    {
+      "id": 4,
+      "name": "Bob Brown"
+    },
+    {
+      "id": 5,
+      "name": "Charlie Davis"
     }
   ],
   "products": [
@@ -59,6 +55,18 @@
     {
       "id": 2,
       "name": "Product B"
+    },
+    {
+      "id": 3,
+      "name": "Product C"
+    },
+    {
+      "id": 4,
+      "name": "Product D"
+    },
+    {
+      "id": 5,
+      "name": "Product E"
     }
   ]
 }
