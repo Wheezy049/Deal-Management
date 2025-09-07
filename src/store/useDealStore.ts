@@ -1,29 +1,19 @@
 import { create } from "zustand";
 import axios from "axios";
-
-export type Deal = {
-    id: number;
-    clientName: string;
-    productName: string;
-    stage: string;
-    createdAt: string;
-}
-
-type DealState = {
-    deals: Deal[];
-    fetchDeals: () => Promise<void>;
-    loading: boolean;
-    error: string | null;
-    addDeal: (deal: Omit<Deal, "id">) => Promise<void>;
-    updateDeal: (id: number, updated: Partial<Deal>) => Promise<void>;
-    deleteDeal: (id: number) => Promise<void>;
-}
+import { DealState } from "@/types/deals";
 
 // create the zustand store
 export const useDealStore = create<DealState>((set) => ({
     deals: [],
+    clients: [],
+    products: [],
     loading: false,
     error: null,
+    currentView: 'table',
+    setCurrentView: (view: 'table' | 'kanban') => {
+        set({ currentView: view });
+        localStorage.setItem('dealCurrentView', view);
+    },
     // fetch deals function
     fetchDeals: async () => {
         set({ loading: true, error: null });
@@ -32,6 +22,24 @@ export const useDealStore = create<DealState>((set) => ({
             set({ deals: response.data, loading: false });
         } catch {
             set({ error: "Failed to fetch deals", loading: false });
+        }
+    },
+    // fetch clients function
+    fetchClients: async () => {
+        try {
+            const res = await axios.get("http://localhost:4000/clients");
+            set({ clients: res.data });
+        } catch {
+            set({ error: "Failed to fetch clients" });
+        }
+    },
+    // fetch products function
+    fetchProducts: async () => {
+        try {
+            const res = await axios.get("http://localhost:4000/products");
+            set({ products: res.data });
+        } catch {
+            set({ error: "Failed to fetch products" });
         }
     },
     // add new deal function
@@ -46,7 +54,7 @@ export const useDealStore = create<DealState>((set) => ({
     // update deal function
     updateDeal: async (id, updated) => {
         try {
-            const response = await axios.put(`http://localhost:4000/deals/${id}`, updated);
+            const response = await axios.patch(`http://localhost:4000/deals/${id}`, updated);
             set((state) => ({ deals: state.deals.map((deal) => deal.id === id ? response.data : deal) }));
         } catch {
             set({ error: "Failed to update deal" });

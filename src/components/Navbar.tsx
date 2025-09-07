@@ -53,14 +53,18 @@ function Navbar() {
     ];
 
     return (
+        <>
+        {scrolling && (
+      <div className="h-[72px] md:h-[104px]"></div>
+    )}
         <nav
             className={`${scrolling ? 'fixed shadow-md shadow-black/10 top-0' : 'relative'
-                } w-full bg-gray-100 text-center transition-all duration-500 text-black dark:bg-gray-900 dark:text-white px-4 md:px-20 py-4 z-[999]`}
+                } w-full bg-gray-100 text-center transition-all duration-500 text-black dark:bg-gray-900 dark:text-white px-4 md:px-20 py-4 md:py-6 z-[999]`}
         >
             {/* desktop view */}
-            <div className="max-w-[1200px] flex justify-between w-full align-middle mx-auto">
-                <h1 className="text-2xl font-bold mb-2 md:mb-0"><Link href='/'>Deal Management</Link></h1>
-                <ul className="hidden md:flex items-center justify-center gap-6 mt-2">
+            <div className="max-w-[1200px] flex justify-between w-full items-center mx-auto">
+                <h1 className="text-base sm:text-[20px] md:text-2xl font-bold"><Link href='/'>Deal Management</Link></h1>
+                <ul className="hidden md:flex items-center justify-center gap-6">
                     {navItems.map((item, index) => (
                         <li key={index} className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                             <Link href={item.href}>{item.title}</Link>
@@ -79,7 +83,7 @@ function Navbar() {
                         </button>
                     </li>
                 </ul>
-                <div className="flex items-center justify-center md:hidden mt-2">
+                <div className="flex items-center justify-center md:hidden">
                     <button
                         onClick={() => setDarkMode(!darkMode)}
                         className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -123,6 +127,7 @@ function Navbar() {
                 </ul>
             </div>
         </nav>
+        </>
     )
 }
 
