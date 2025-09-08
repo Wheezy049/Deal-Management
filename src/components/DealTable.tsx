@@ -77,7 +77,7 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
           <button
             key={col}
             onClick={() => toggleColumn(col)}
-            className={`px-2 py-1 rounded ${columnsVisible[col] ? 'bg-blue-500 text-white' : 'bg-gray-200'
+            className={`px-2 py-1 rounded transition-colors duration-200 ${columnsVisible[col] ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-gray-200 hover:bg-gray-300'
               }`}
           >
             {columnsVisible[col] ? `Hide ${col}` : `Show ${col}`}

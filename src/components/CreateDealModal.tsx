@@ -122,13 +122,13 @@ function CreateDealModal({ isOpen, onClose }: Props) {
                         />
                     </div>
                     <div className="flex justify-end gap-2">
-                        <button type="button" onClick={onClose} className="px-4 py-2 border rounded">
+                        <button type="button" onClick={onClose} className="px-4 py-2 border rounded hover:bg-gray-100">
                             Cancel
                         </button>
                         <button
                             disabled={loading || !formData.clientName || !formData.productName}
                             type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 transition-colors duration-200 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? "Creating Deal..." : "Create Deal"}
                         </button>

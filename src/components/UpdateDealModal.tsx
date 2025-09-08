@@ -100,10 +100,10 @@ function UpdateDealModal({ isOpen, onClose, deal }: Props) {
                     />
 
                     <div className="flex justify-end gap-2">
-                        <button type="button" onClick={onClose} className="px-4 py-2 border rounded">
+                        <button type="button" onClick={onClose} className="px-4 py-2 border rounded hover:bg-gray-100">
                             Cancel
                         </button>
-                        <button disabled={isUpdating} type="submit" className="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button disabled={isUpdating} type="submit" className="px-4 py-2 bg-green-500 hover:bg-green-600 transition-colors duration-200  text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">
                             {isUpdating ? "Updating Deal..." : "Update Deal"}
                         </button>
                     </div>

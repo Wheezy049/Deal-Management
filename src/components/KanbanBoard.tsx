@@ -152,9 +152,9 @@ export default function KanbanBoard({
           <button
             key={key}
             onClick={() => toggleMetadata(key as keyof MetadataVisible)}
-            className={`px-3 py-1 rounded border ${kanbanMetadataVisible[key as keyof MetadataVisible]
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200"
+            className={`px-3 py-1 rounded border transition-colors duration-200 ${kanbanMetadataVisible[key as keyof MetadataVisible]
+                ? "bg-blue-500 text-white hover:bg-blue-600"
+                : "bg-gray-200 hover:bg-gray-300"
               }`}
           >
             {kanbanMetadataVisible[key as keyof MetadataVisible] ? `Hide ${key}` : `Show ${key}`}
