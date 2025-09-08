@@ -68,6 +68,13 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
 
   if (loading) return <p>Loading deals...</p>;
   if (error) return <p>{error}</p>;
+  if (deals.length === 0) {
+  return (
+    <div className="flex items-center justify-center min-h-[200px] w-full bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 p-4 rounded">
+      <p>No deals found</p>
+    </div>
+  );
+}
 
   return (
     <div className="p-4 overflow-x-auto">
