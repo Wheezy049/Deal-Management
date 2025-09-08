@@ -63,7 +63,11 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
     setIsDeleting(prev => ({ ...prev, [id]: true }));
     setTimeout(() => {
       deleteDeal(id)
-        .finally(() => setIsDeleting(prev => ({ ...prev, [id]: false })));
+        .finally(() => {
+           setIsDeleting(prev => ({ ...prev, [id]: false }));
+           setConfirmDeleteId(null)
+        }
+          );
     }, 1000);
   };
 
@@ -128,7 +132,7 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
         </tbody>
       </table>
       {confirmDeleteId !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div role='dialog' aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
           <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-sm">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
               Confirm Delete
@@ -146,11 +150,10 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
               <button
                 onClick={() => {
                   if (confirmDeleteId !== null) handleDelete(confirmDeleteId);
-                  setConfirmDeleteId(null);
                 }}
                 className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 transition-colors"
               >
-                {isDeleting ? "Deleting" : "Delete"}
+                {isDeleting[confirmDeleteId] ? "Deleting..." : "Delete"}
               </button>
             </div>
           </div>

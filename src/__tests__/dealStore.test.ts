@@ -5,7 +5,9 @@ import { beforeEach, describe } from 'node:test';
 import { expect, it } from '@jest/globals';
 import { Stage } from '@/types/deals';
 
+jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
+
 mockedAxios.get.mockResolvedValue({ data: [] });
 
 describe("Deal store", () => {

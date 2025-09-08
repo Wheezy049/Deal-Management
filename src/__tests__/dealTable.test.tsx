@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import { render, screen, fireEvent, within, act } from "@testing-library/react";
 import { useDealStore } from "@/store/useDealStore";
 import DealTable from "../components/DealTable";
 
@@ -138,29 +138,59 @@ describe("DealTable Integration", () => {
   it("handles delete with loading state", async () => {
     jest.useFakeTimers();
 
+    const mockDeleteDeal = jest.fn(() => Promise.resolve());
+
+    mockUseDealStore.mockReturnValue({
+      deals: [
+        {
+          id: 1,
+          clientName: "Alice",
+          productName: "Laptop",
+          stage: "Lead Generated",
+          createdAt: "2024-01-01T00:00:00Z",
+        },
+      ],
+      loading: false,
+      error: null,
+      fetchDeals: jest.fn(),
+      deleteDeal: mockDeleteDeal,
+    });
+
     render(
       <DealTable
-        setIsUpdateOpen={setIsUpdateOpen}
-        setIsViewOpen={setIsViewOpen}
-        setSelectedDeal={setSelectedDeal}
+        setIsUpdateOpen={jest.fn()}
+        setIsViewOpen={jest.fn()}
+        setSelectedDeal={jest.fn()}
       />
     );
 
-    const deleteBtn = screen.getAllByText("Delete")[0];
+    const deleteBtn = screen.getByText("Delete");
     fireEvent.click(deleteBtn);
-    expect(screen.getByText("Deleting...")).toBeInTheDocument();
+    const modal = screen.getByRole("dialog");
+
+    expect(modal).toBeInTheDocument();
+    const confirmBtn = within(modal).getByText("Delete");
+    fireEvent.click(confirmBtn);
+
     act(() => {
-      jest.advanceTimersByTime(2000);
+      jest.advanceTimersByTime(0);
     });
-    await waitFor(() => {
-      expect(mockDeleteDeal).toHaveBeenCalledWith(1);
+
+    expect(screen.getByText("Deleting...")).toBeInTheDocument();
+
+    await act(async () => {
+      jest.advanceTimersByTime(1000);
+      await Promise.resolve();
     });
-    await waitFor(() => {
-      expect(screen.queryByText("Deleting...")).not.toBeInTheDocument();
-    });
+
+    expect(mockDeleteDeal).toHaveBeenCalledWith(1);
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
     jest.useRealTimers();
   });
+
+
 
   it("calls view and edit props correctly", () => {
     render(

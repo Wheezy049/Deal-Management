@@ -4,7 +4,7 @@ import type { DealFormState, Props } from '@/types/deals';
 
 function CreateDealModal({ isOpen, onClose }: Props) {
     const [loading, setLoading] = useState(false);
-    const { addDeal, fetchEntities, clients, products } = useDealStore();
+    const { addDeal, clients, products } = useDealStore();
     const [formData, setFormData] = useState<DealFormState>({
         clientName: "",
         productName: "",
@@ -14,12 +14,12 @@ function CreateDealModal({ isOpen, onClose }: Props) {
     })
 
     // fetch clients and products on mount
-    useEffect(() => {
-        const fetchData = async () => {
-            await fetchEntities();
-        };
-        fetchData();
-    }, []);
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         await fetchEntities();
+    //     };
+    //     fetchData();
+    // }, []);
 
     // handle form field changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
