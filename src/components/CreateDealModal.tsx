@@ -47,7 +47,7 @@ function CreateDealModal({ isOpen, onClose }: Props) {
                 });
                 onClose();
             });
-        }, 2000);
+        }, 1000);
     };
 
     if (!isOpen) return null;

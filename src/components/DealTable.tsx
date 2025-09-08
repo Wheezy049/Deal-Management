@@ -12,6 +12,7 @@ type Props = {
 function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
   const { deals, loading, error, fetchDeals, deleteDeal } = useDealStore();
   const [isDeleting, setIsDeleting] = useState<{ [id: number]: boolean }>({});
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [columnsVisible, setColumnsVisible] = useState<ColumnVisibility>({
     clientName: true,
     productName: true,
@@ -63,18 +64,18 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
     setTimeout(() => {
       deleteDeal(id)
         .finally(() => setIsDeleting(prev => ({ ...prev, [id]: false })));
-    }, 2000);
+    }, 1000);
   };
 
   if (loading) return <p>Loading deals...</p>;
   if (error) return <p>{error}</p>;
   if (deals.length === 0) {
-  return (
-    <div className="flex items-center justify-center min-h-[200px] w-full bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 p-4 rounded">
-      <p>No deals found</p>
-    </div>
-  );
-}
+    return (
+      <div className="flex items-center justify-center min-h-[200px] w-full bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 p-4 rounded">
+        <p>No deals found</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 overflow-x-auto">
@@ -114,8 +115,11 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
                 <td className="p-3 dark:text-white">
                   <button onClick={() => { setSelectedDeal(deal); setIsViewOpen(true); }} className="text-green-500 hover:underline">View</button>
                   <button onClick={() => { setSelectedDeal(deal); setIsUpdateOpen(true); }} className="text-blue-500 hover:underline ml-2">Edit</button>
-                  <button onClick={() => handleDelete(deal.id)} className="text-red-500 hover:underline ml-2">
-                    {isDeleting[deal.id] ? "Deleting..." : "Delete"}
+                  <button
+                    onClick={() => setConfirmDeleteId(deal.id)}
+                    className="text-red-500 hover:underline ml-2"
+                  >
+                    Delete
                   </button>
                 </td>
               )}
@@ -123,6 +127,36 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
           ))}
         </tbody>
       </table>
+      {confirmDeleteId !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-sm">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+              Confirm Delete
+            </h2>
+            <p className="text-gray-700 dark:text-gray-300 mb-6">
+              Are you sure you want to delete this deal? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (confirmDeleteId !== null) handleDelete(confirmDeleteId);
+                  setConfirmDeleteId(null);
+                }}
+                className="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 transition-colors"
+              >
+                {isDeleting ? "Deleting" : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

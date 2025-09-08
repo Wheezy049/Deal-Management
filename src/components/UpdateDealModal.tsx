@@ -42,7 +42,7 @@ function UpdateDealModal({ isOpen, onClose, deal }: Props) {
                 setIsUpdating(false);
                 onClose();
             });
-        }, 2000);
+        }, 1000);
     };
 
     if (!isOpen || !formData) return null;
