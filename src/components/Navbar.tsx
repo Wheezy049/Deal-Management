@@ -85,7 +85,7 @@ function Navbar() {
                 </ul>
                 <div className="flex items-center justify-center md:hidden">
                     <button
-                        onClick={() => setDarkMode(!darkMode)}
+                        onClick={toggleDarkMode}
                         className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                         aria-label="Toggle dark mode"
                     >
