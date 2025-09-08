@@ -29,8 +29,7 @@ export type DealState = {
     clients: ClientState[];
     products: ProductState[];
     fetchDeals: () => Promise<void>;
-    fetchClients: () => Promise<void>;
-    fetchProducts: () => Promise<void>;
+    fetchEntities: () => Promise<void>;
     loading: boolean;
     error: string | null;
     addDeal: (deal: Omit<Deal, "id">) => Promise<void>;
@@ -71,4 +70,10 @@ export type ColumnVisibility = {
     stage: boolean;
     createdAt: boolean;
     actions: boolean;
+};
+
+export type Entity = {
+  id: number;
+  type: "client" | "product";
+  name: string;
 };

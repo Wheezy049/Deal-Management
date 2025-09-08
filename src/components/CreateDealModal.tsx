@@ -4,7 +4,7 @@ import type { DealFormState, Props } from '@/types/deals';
 
 function CreateDealModal({ isOpen, onClose }: Props) {
     const [loading, setLoading] = useState(false);
-    const { addDeal, fetchClients, fetchProducts, clients, products } = useDealStore();
+    const { addDeal, fetchEntities, clients, products } = useDealStore();
     const [formData, setFormData] = useState<DealFormState>({
         clientName: "",
         productName: "",
@@ -16,8 +16,7 @@ function CreateDealModal({ isOpen, onClose }: Props) {
     // fetch clients and products on mount
     useEffect(() => {
         const fetchData = async () => {
-            await fetchProducts();
-            await fetchClients();
+            await fetchEntities();
         };
         fetchData();
     }, []);
@@ -54,7 +53,7 @@ function CreateDealModal({ isOpen, onClose }: Props) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 sm:p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 sm:p-6">
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md sm:max-w-lg md:max-w-xl">
                 <h2 className="text-xl font-semibold mb-4">Create Deal</h2>
                 <form role='form' onSubmit={handleSubmit} className="space-y-4">

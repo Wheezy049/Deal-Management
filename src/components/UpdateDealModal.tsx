@@ -9,7 +9,7 @@ type Props = {
 };
 
 function UpdateDealModal({ isOpen, onClose, deal }: Props) {
-    const { updateDeal, fetchProducts, fetchClients, clients, products } = useDealStore();
+    const { updateDeal, fetchEntities, clients, products } = useDealStore();
     const [isUpdating, setIsUpdating] = useState(false);
     const [formData, setFormData] = useState<Deal | null>(deal);
 
@@ -21,8 +21,7 @@ function UpdateDealModal({ isOpen, onClose, deal }: Props) {
     // fetch clients and products on mount
     useEffect(() => {
         const fetchData = async () => {
-            await fetchProducts();
-            await fetchClients();
+            await fetchEntities();
         };
         fetchData();
     }, []);
