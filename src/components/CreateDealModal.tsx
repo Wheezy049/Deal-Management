@@ -57,54 +57,70 @@ function CreateDealModal({ isOpen, onClose }: Props) {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 sm:p-6">
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md sm:max-w-lg md:max-w-xl">
                 <h2 className="text-xl font-semibold mb-4">Create Deal</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <select
-                        name="clientName"
-                        value={formData.clientName}
-                        onChange={handleChange}
-                        className="w-full border p-2 rounded"
-                        required
-                    >
-                        <option value="">Select Client</option>
-                        {clients?.map(client => (
-                            <option key={client.id} value={client.name}>{client.name}</option>
-                        ))}
-                    </select>
-                    <select
-                        name="productName"
-                        value={formData.productName}
-                        onChange={handleChange}
-                        className="w-full border p-2 rounded"
-                        required
-                    >
-                        <option value="">Select Product</option>
-                        {products?.map(product => (
-                            <option key={product.id} value={product.name}>{product.name}</option>
-                        ))}
-                    </select>
-                    <select
-                        name="stage"
-                        value={formData.stage}
-                        onChange={handleChange}
-                        className="w-full border p-2 rounded"
-                    >
-                        <option>Lead Generated</option>
-                        <option>Contacted</option>
-                        <option>Application Submitted</option>
-                        <option>Application Under Review</option>
-                        <option>Deal Finalized</option>
-                        <option>Payment Confirmed</option>
-                        <option>Completed</option>
-                        <option>Lost</option>
-                    </select>
-                    <textarea
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        className="w-full border p-2 rounded"
-                        placeholder="Description (optional)"
-                        rows={3}
-                    />
+                <form role='form' onSubmit={handleSubmit} className="space-y-4">
+                    <div className='flex flex-col gap-2'>
+                        <label htmlFor="clientName">Client</label>
+                        <select
+                            id="clientName"
+                            name="clientName"
+                            value={formData.clientName}
+                            onChange={handleChange}
+                            className="w-full border p-2 rounded"
+                            required
+                        >
+                            <option value="">Select Client</option>
+                            {clients?.map(client => (
+                                <option key={client.id} value={client.name}>{client.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className='flex flex-col gap-2'>
+                        <label htmlFor="productName">Product</label>
+                        <select
+                            id="productName"
+                            name="productName"
+                            value={formData.productName}
+                            onChange={handleChange}
+                            className="w-full border p-2 rounded"
+                            required
+                        >
+                            <option value="">Select Product</option>
+                            {products?.map(product => (
+                                <option key={product.id} value={product.name}>{product.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className='flex flex-col gap-2'>
+                        <label htmlFor="stage">Stage:</label>
+                        <select
+                            id='stage'
+                            name="stage"
+                            value={formData.stage}
+                            onChange={handleChange}
+                            className="w-full border p-2 rounded"
+                        >
+                            <option>Lead Generated</option>
+                            <option>Contacted</option>
+                            <option>Application Submitted</option>
+                            <option>Application Under Review</option>
+                            <option>Deal Finalized</option>
+                            <option>Payment Confirmed</option>
+                            <option>Completed</option>
+                            <option>Lost</option>
+                        </select>
+                    </div>
+                    <div className='flex flex-col gap-2'>
+                        <label htmlFor='description'>Description:</label>
+                        <textarea
+                            id='description'
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            className="w-full border p-2 rounded"
+                            placeholder="Description (optional)"
+                            rows={3}
+                        />
+                    </div>
                     <div className="flex justify-end gap-2">
                         <button type="button" onClick={onClose} className="px-4 py-2 border rounded">
                             Cancel

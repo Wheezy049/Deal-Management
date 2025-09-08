@@ -1,7 +1,6 @@
 import { useDealStore } from "@/store/useDealStore";
 import {
   DndContext,
-  DragEndEvent,
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
@@ -16,6 +15,8 @@ import type { Stage, Deal, MetadataVisible } from "@/types/deals";
 import { createPortal } from "react-dom";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { handleDragEnd } from "@/utils/KanbanDrag";
+
 
 const stages: Stage[] = [
   "Lead Generated",
@@ -75,7 +76,7 @@ export default function KanbanBoard({
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const id = String(active.id);
-    
+
     const deal = deals.find((deal) => String(deal.id) === id);
     if (deal) {
       setActiveId(id);
@@ -97,43 +98,43 @@ export default function KanbanBoard({
 
     // Check if we're dragging over a stage column (not another deal)
     const overStage = stages.find(stage => stage === overId);
-    
+
     if (overStage && activeDeal.stage !== overStage) {
       // Update the deal's stage immediately for visual feedback
-      const updatedDeals = deals.map(deal => 
-        String(deal.id) === activeId 
+      const updatedDeals = deals.map(deal =>
+        String(deal.id) === activeId
           ? { ...deal, stage: overStage }
           : deal
       );
     }
   };
 
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
-    
-    setActiveId(null);
-    setActiveDeal(null);
+  //  const handleDragEnd = async (event: DragEndEvent) => {
+  //     const { active, over } = event;
 
-    if (!over) return;
+  //     setActiveId(null);
+  //     setActiveDeal(null);
 
-    const activeId = String(active.id);
-    const overId = String(over.id);
+  //     if (!over) return;
 
-    const activeDeal = deals.find((deal) => String(deal.id) === activeId);
-    if (!activeDeal) return;
+  //     const activeId = String(active.id);
+  //     const overId = String(over.id);
 
-    // Check if we're dropping on a stage column
-    const overStage = stages.find(stage => stage === overId);
-    
-    if (overStage && activeDeal.stage !== overStage) {
-      try {
-        await updateDeal(activeDeal.id, { stage: overStage });
-        console.log(`Moved deal ${activeDeal.id} to ${overStage}`);
-      } catch (error) {
-        console.error("Failed to update deal stage:", error);
-      }
-    }
-  };
+  //     const activeDeal = deals.find((deal) => String(deal.id) === activeId);
+  //     if (!activeDeal) return;
+
+  //     // Check if we're dropping on a stage column
+  //     const overStage = stages.find(stage => stage === overId);
+
+  //     if (overStage && activeDeal.stage !== overStage) {
+  //       try {
+  //         await updateDeal(activeDeal.id, { stage: overStage });
+  //         console.log(`Moved deal ${activeDeal.id} to ${overStage}`);
+  //       } catch (error) {
+  //         console.error("Failed to update deal stage:", error);
+  //       }
+  //     }
+  //   };
 
   const toggleMetadata = (key: keyof MetadataVisible) => {
     setKanbanMetadataVisible(key, !kanbanMetadataVisible[key]);
@@ -151,11 +152,10 @@ export default function KanbanBoard({
           <button
             key={key}
             onClick={() => toggleMetadata(key as keyof MetadataVisible)}
-            className={`px-3 py-1 rounded border ${
-              kanbanMetadataVisible[key as keyof MetadataVisible]
+            className={`px-3 py-1 rounded border ${kanbanMetadataVisible[key as keyof MetadataVisible]
                 ? "bg-blue-500 text-white"
                 : "bg-gray-200"
-            }`}
+              }`}
           >
             {kanbanMetadataVisible[key as keyof MetadataVisible] ? `Hide ${key}` : `Show ${key}`}
           </button>
@@ -168,7 +168,12 @@ export default function KanbanBoard({
         collisionDetection={closestCorners}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
+        onDragEnd={(event) =>
+          handleDragEnd(event, deals, updateDeal).then(() => {
+            setActiveId(null);
+            setActiveDeal(null);
+          })
+        }
       >
         <div className="flex gap-4 overflow-x-auto p-2">
           {stages.map((stage) => (
@@ -234,7 +239,7 @@ function StageColumn({
   });
 
   return (
-    <div 
+    <div
       ref={setNodeRef}
       className="bg-gray-100 p-4 rounded-lg min-w-[250px] flex-shrink-0"
     >
@@ -244,7 +249,7 @@ function StageColumn({
           {deals.length}
         </span>
       </div>
-      
+
       <SortableContext items={deals.map((d) => String(d.id))} strategy={verticalListSortingStrategy}>
         <div className="space-y-3 min-h-[200px]">
           {deals.map((deal) => (
@@ -323,8 +328,8 @@ function DealCard({
   if (isDragOverlay) {
     return (
       <div className="bg-white p-3 rounded-lg shadow-lg border-2 border-blue-300 rotate-3 opacity-90">
-        <DealContent 
-          deal={deal} 
+        <DealContent
+          deal={deal}
           metadataVisible={metadataVisible}
           onView={handleViewClick}
           onEdit={handleEditClick}
@@ -340,12 +345,11 @@ function DealCard({
       style={style}
       {...attributes}
       {...listeners}
-      className={`bg-white p-3 rounded-lg shadow-sm border border-gray-200 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow ${
-        isDragging ? 'opacity-30' : 'opacity-100'
-      }`}
+      className={`bg-white p-3 rounded-lg shadow-sm border border-gray-200 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow ${isDragging ? 'opacity-30' : 'opacity-100'
+        }`}
     >
-      <DealContent 
-        deal={deal} 
+      <DealContent
+        deal={deal}
         metadataVisible={metadataVisible}
         onView={handleViewClick}
         onEdit={handleEditClick}
@@ -355,12 +359,12 @@ function DealCard({
   );
 }
 
-function DealContent({ 
-  deal, 
-  metadataVisible, 
-  onView, 
-  onEdit, 
-  onDelete 
+function DealContent({
+  deal,
+  metadataVisible,
+  onView,
+  onEdit,
+  onDelete
 }: {
   deal: Deal;
   metadataVisible: MetadataVisible;

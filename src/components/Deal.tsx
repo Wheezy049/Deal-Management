@@ -29,8 +29,8 @@ function Deal() {
                 <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-2 flex flex-row items-stretch sm:items-center shadow-sm gap-2">
                     <button
                         className={`px-4 py-2 rounded-lg sm:rounded-l-lg transition-colors duration-200 ${currentView === "table"
-                                ? "bg-white text-gray-900 shadow-md"
-                                : "text-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700"
+                            ? "bg-white text-gray-900 shadow-md"
+                            : "text-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700"
                             }`}
                         onClick={() => setCurrentView("table")}
                     >
@@ -38,8 +38,8 @@ function Deal() {
                     </button>
                     <button
                         className={`px-4 py-2 rounded-lg sm:rounded-r-lg transition-colors duration-200 ${currentView === "kanban"
-                                ? "bg-white text-gray-900 shadow-md"
-                                : "text-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700"
+                            ? "bg-white text-gray-900 shadow-md"
+                            : "text-gray-600 hover:bg-gray-200 dark:hover:bg-gray-700"
                             }`}
                         onClick={() => setCurrentView("kanban")}
                     >

@@ -1,12 +1,12 @@
 export type Stage =
-  | "Lead Generated"
-  | "Contacted"
-  | "Application Submitted"
-  | "Application Under Review"
-  | "Deal Finalized"
-  | "Payment Confirmed"
-  | "Completed"
-  | "Lost";
+    | "Lead Generated"
+    | "Contacted"
+    | "Application Submitted"
+    | "Application Under Review"
+    | "Deal Finalized"
+    | "Payment Confirmed"
+    | "Completed"
+    | "Lost";
 
 
 export type Deal = {
@@ -19,9 +19,9 @@ export type Deal = {
 }
 
 export type MetadataVisible = {
-  clientName: boolean;
-  productName: boolean;
-  createdAt: boolean;
+    clientName: boolean;
+    productName: boolean;
+    createdAt: boolean;
 };
 
 export type DealState = {
@@ -45,7 +45,7 @@ export type DealState = {
 export type DealFormState = {
     clientName: string;
     productName: string;
-    stage: string;
+    stage: Stage;
     createdAt: string;
     description?: string;
 }

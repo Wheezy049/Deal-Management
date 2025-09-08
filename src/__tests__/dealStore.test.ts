@@ -1,14 +1,12 @@
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 import { useDealStore } from '@/store/useDealStore';
 import axios  from 'axios';
-import type { Mocked } from 'jest-mock';
 import { beforeEach, describe } from 'node:test';
 import { expect, it } from '@jest/globals';
 import { Stage } from '@/types/deals';
 
-// @ts-expect-error
-jest.mock('axios');
-const mockedAxios = axios as Mocked<typeof axios>;
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+mockedAxios.get.mockResolvedValue({ data: [] });
 
 describe("Deal store", () => {
     beforeEach(() => {
@@ -26,7 +24,6 @@ describe("Deal store", () => {
                 createdAt: true,
             },
         });
-        // @ts-expect-error
         jest.clearAllMocks();
     });
 
