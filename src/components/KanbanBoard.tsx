@@ -8,6 +8,7 @@ import {
   useSensor,
   useSensors,
   closestCorners,
+  useDroppable,
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useEffect, useState } from "react";
@@ -55,7 +56,7 @@ export default function KanbanBoard({
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState<{ [id: number]: boolean }>({});
 
-  //   // Load metadata visibility from localStorage
+  // Load metadata visibility from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("kanbanMetadataVisible");
     if (saved) {
@@ -66,7 +67,7 @@ export default function KanbanBoard({
     }
   }, [setKanbanMetadataVisible]);
 
-  //   // Save to localStorage on change
+  // Save to localStorage on change
   useEffect(() => {
     localStorage.setItem("kanbanMetadataVisible", JSON.stringify(kanbanMetadataVisible));
   }, [kanbanMetadataVisible]);
@@ -87,7 +88,7 @@ export default function KanbanBoard({
     deal.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // handle start drag function
+  // handle drag start function
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const id = String(active.id);
@@ -101,28 +102,29 @@ export default function KanbanBoard({
 
   // handle drag over function
   const handleDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
-    if (!over) return;
+  const { active, over } = event;
+  if (!over) return;
 
-    const activeId = String(active.id);
-    const overId = String(over.id);
+  const activeId = String(active.id);
+  const overId = String(over.id);
 
-    // Find the active deal
-    const activeDeal = filteredDeals.find((deal) => String(deal.id) === activeId);
-    if (!activeDeal) return;
+  // Find the active deal
+  const activeDeal = deals.find((deal) => String(deal.id) === activeId);
+  if (!activeDeal) return;
 
-    // Check if we're dragging over a stage column (not another deal)
-    const overStage = stages.find(stage => stage === overId);
+  // Check if we're dragging over a stage column (not another deal)
+  const overStage = stages.find(stage => stage === overId);
 
-    if (overStage && activeDeal.stage !== overStage) {
-      // Update the deal's stage immediately for visual feedback
-      const updatedDeals = filteredDeals.map(deal =>
-        String(deal.id) === activeId
-          ? { ...deal, stage: overStage }
-          : deal
-      );
-    }
-  };
+  if (overStage && activeDeal.stage !== overStage) {
+    // Update the deal's stage immediately for visual feedback
+    const updatedDeals = deals.map(deal =>
+      String(deal.id) === activeId
+        ? { ...deal, stage: overStage }
+        : deal
+    );
+    
+  }
+};
 
   const toggleMetadata = (key: keyof MetadataVisible) => {
     setKanbanMetadataVisible(key, !kanbanMetadataVisible[key]);
@@ -227,12 +229,7 @@ export default function KanbanBoard({
             collisionDetection={closestCorners}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
-            onDragEnd={(event) =>
-              handleDragEnd(event, filteredDeals, updateDeal).then(() => {
-                setActiveId(null);
-                setActiveDeal(null);
-              })
-            }
+            onDragEnd={(event) => handleDragEnd(event, filteredDeals, updateDeal, setActiveId, setActiveDeal)}
           >
             <div className="flex gap-4 overflow-x-auto pb-4">
               {stages.map((stage) => (
@@ -307,7 +304,6 @@ export default function KanbanBoard({
         </div>
       )}
 
-      {/* Click outside handlers */}
       {showSettingsDropdown && (
         <div
           className="fixed inset-0 z-0"
@@ -349,10 +345,8 @@ function StageColumn({
   setConfirmDeleteId: (id: number | null) => void;
   isDeleting: { [id: number]: boolean };
 }) {
-  const {
-    setNodeRef,
-  } = useSortable({
-    id: stage,
+  const { setNodeRef } = useDroppable({
+    id: stage, 
     data: {
       type: "Column",
       stage,
@@ -362,7 +356,7 @@ function StageColumn({
   return (
     <div
       ref={setNodeRef}
-      className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg min-w-[280px] flex-shrink-0"
+      className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg min-w-[280px] flex-shrink-0 border border-gray-200 dark:border-gray-600"
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -390,6 +384,11 @@ function StageColumn({
               isDeleting={isDeleting}
             />
           ))}
+          {deals.length === 0 && (
+            <div className="flex items-center justify-center h-32 text-gray-400 text-sm border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+              Drop deals here
+            </div>
+          )}
         </div>
       </SortableContext>
     </div>
@@ -402,7 +401,6 @@ function DealCard({
   setIsViewOpen,
   setIsUpdateOpen,
   setSelectedDeal,
-  deleteDeal,
   showActionsDropdown,
   setShowActionsDropdown,
   setConfirmDeleteId,
@@ -441,9 +439,28 @@ function DealCard({
     transition,
   };
 
+  const handleViewClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedDeal(deal);
+    setIsViewOpen(true);
+  };
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedDeal(deal);
+    setIsUpdateOpen(true);
+  };
+
+  // const handleDeleteClick = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   if (window.confirm('Are you sure you want to delete this deal?')) {
+  //     deleteDeal(deal.id);
+  //   }
+  // };
+
   if (isDragOverlay) {
     return (
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border-2 border-blue-300 dark:border-blue-500 rotate-3 opacity-90 min-w-[250px]">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border-2 border-blue-300 dark:border-blue-500 rotate-3 opacity-90 min-w-[250px] cursor-grabbing">
         <DealContent
           deal={deal}
           metadataVisible={metadataVisible}
@@ -454,7 +471,8 @@ function DealCard({
           setShowActionsDropdown={setShowActionsDropdown}
           setConfirmDeleteId={setConfirmDeleteId}
           isDeleting={isDeleting}
-          isDragOverlay
+          onView={handleViewClick}
+          onEdit={handleEditClick}
         />
       </div>
     );
@@ -465,10 +483,12 @@ function DealCard({
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
-      className={`bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 cursor-grab active:cursor-grabbing hover:shadow-md transition-all duration-200 ${isDragging ? 'opacity-30' : 'opacity-100'
-        }`}
+        {...listeners}
+      className={`bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-200 ${
+        isDragging ? 'opacity-50 scale-105' : 'opacity-100'
+      }`}
     >
+      
       <DealContent
         deal={deal}
         metadataVisible={metadataVisible}
@@ -479,6 +499,8 @@ function DealCard({
         setShowActionsDropdown={setShowActionsDropdown}
         setConfirmDeleteId={setConfirmDeleteId}
         isDeleting={isDeleting}
+        onView={handleViewClick}
+        onEdit={handleEditClick}
       />
     </div>
   );
@@ -487,14 +509,12 @@ function DealCard({
 function DealContent({
   deal,
   metadataVisible,
-  setIsViewOpen,
-  setIsUpdateOpen,
-  setSelectedDeal,
   showActionsDropdown,
   setShowActionsDropdown,
   setConfirmDeleteId,
-  isDeleting,
-  isDragOverlay = false
+  isDragOverlay = false,
+  onView,
+  onEdit,
 }: {
   deal: Deal;
   metadataVisible: MetadataVisible;
@@ -506,43 +526,31 @@ function DealContent({
   setConfirmDeleteId: (id: number | null) => void;
   isDeleting: { [id: number]: boolean };
   isDragOverlay?: boolean;
+  onView: (e: React.MouseEvent) => void;
+  onEdit: (e: React.MouseEvent) => void;
 }) {
+  const handleButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+
   return (
-    <>
-      <div className="mb-3 space-y-2">
-        {metadataVisible.clientName && (
-          <p className="font-semibold text-gray-900 dark:text-white text-sm">{deal.clientName}</p>
-        )}
-        {metadataVisible.productName && (
-          <p className="text-gray-700 dark:text-gray-300 text-sm">{deal.productName}</p>
-        )}
-        {metadataVisible.description && deal.description && (
-          <p className="text-gray-600 dark:text-gray-400 text-xs line-clamp-2">{deal.description}</p>
-        )}
-        {metadataVisible.createdAt && (
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {new Date(deal.createdAt).toLocaleDateString()}
-          </p>
-        )}
-      </div>
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-between items-start">
+        <div className="flex flex-col gap-1">
+          {metadataVisible.clientName && (
+            <p className="font-semibold text-gray-900 dark:text-white text-sm">{deal.clientName}</p>
+          )}
+          {metadataVisible.productName && (
+            <p className="text-gray-700 dark:text-gray-300 text-sm">{deal.productName}</p>
+          )}
+        </div>
 
-      {!isDragOverlay && (
-        <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-600">
-          <div className="text-xs">
-            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${deal.stage === 'Completed'
-              ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
-              : deal.stage === 'Lost'
-                ? 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
-                : 'bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100'
-              }`}>
-              {deal.stage}
-            </span>
-          </div>
-
+        {!isDragOverlay && (
           <div className="relative">
             <button
               onClick={(e) => {
-                e.stopPropagation();
+                handleButtonClick(e);
                 setShowActionsDropdown(showActionsDropdown === deal.id ? null : deal.id);
               }}
               className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded transition-colors"
@@ -551,32 +559,22 @@ function DealContent({
             </button>
 
             {showActionsDropdown === deal.id && (
-              <div className="absolute right-0 bottom-full mb-2 w-28 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20">
+              <div className="absolute right-0 top-full mt-2 w-28 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20">
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedDeal(deal);
-                    setIsViewOpen(true);
-                    setShowActionsDropdown(null);
-                  }}
+                  onClick={onView}
                   className="block w-full text-left px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg"
                 >
                   View
                 </button>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedDeal(deal);
-                    setIsUpdateOpen(true);
-                    setShowActionsDropdown(null);
-                  }}
+                  onClick={onEdit}
                   className="block w-full text-left px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   Edit
                 </button>
                 <button
                   onClick={(e) => {
-                    e.stopPropagation();
+                    handleButtonClick(e);
                     setConfirmDeleteId(deal.id);
                     setShowActionsDropdown(null);
                   }}
@@ -587,8 +585,20 @@ function DealContent({
               </div>
             )}
           </div>
-        </div>
-      )}
-    </>
+        )}
+      </div>
+
+      {/* Description & Created At */}
+      <div className="flex flex-col gap-1">
+        {metadataVisible.description && deal.description && (
+          <p className="text-gray-600 dark:text-gray-400 text-xs line-clamp-2">{deal.description}</p>
+        )}
+        {metadataVisible.createdAt && (
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {new Date(deal.createdAt).toLocaleDateString()}
+          </p>
+        )}
+      </div>
+    </div>
   );
 }
