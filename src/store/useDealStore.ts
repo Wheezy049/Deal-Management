@@ -62,13 +62,17 @@ export const useDealStore = create<DealState>((set) => ({
     },
     // update deal function
     updateDeal: async (id, updated) => {
-        try {
-            const response = await axios.put(`${API_URL}/deals/${id}`, updated);
-            set((state) => ({ deals: state.deals.map((deal) => deal.id === id ? response.data : deal) }));
-        } catch {
-            set({ error: "Failed to update deal" });
-        }
-    },
+  try {
+    const response = await axios.put(`${API_URL}/deals/${id}`, updated);
+    set((state) => ({
+      deals: state.deals.map((deal) =>
+        deal.id === id ? { ...deal, ...response.data } : deal
+      ),
+    }));
+  } catch {
+    set({ error: "Failed to update deal" });
+  }
+},
     // delete deal function
     deleteDeal: async (id) => {
         try {

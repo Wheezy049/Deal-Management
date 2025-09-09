@@ -102,29 +102,29 @@ export default function KanbanBoard({
 
   // handle drag over function
   const handleDragOver = (event: DragOverEvent) => {
-  const { active, over } = event;
-  if (!over) return;
+    const { active, over } = event;
+    if (!over) return;
 
-  const activeId = String(active.id);
-  const overId = String(over.id);
+    const activeId = String(active.id);
+    const overId = String(over.id);
 
-  // Find the active deal
-  const activeDeal = deals.find((deal) => String(deal.id) === activeId);
-  if (!activeDeal) return;
+    // Find the active deal
+    const activeDeal = deals.find((deal) => String(deal.id) === activeId);
+    if (!activeDeal) return;
 
-  // Check if we're dragging over a stage column (not another deal)
-  const overStage = stages.find(stage => stage === overId);
+    // Check if we're dragging over a stage column (not another deal)
+    const overStage = stages.find(stage => stage === overId);
 
-  if (overStage && activeDeal.stage !== overStage) {
-    // Update the deal's stage immediately for visual feedback
-    const updatedDeals = deals.map(deal =>
-      String(deal.id) === activeId
-        ? { ...deal, stage: overStage }
-        : deal
-    );
-    
-  }
-};
+    if (overStage && activeDeal.stage !== overStage) {
+      // Update the deal's stage immediately for visual feedback
+      const updatedDeals = deals.map(deal =>
+        String(deal.id) === activeId
+          ? { ...deal, stage: overStage }
+          : deal
+      );
+
+    }
+  };
 
   const toggleMetadata = (key: keyof MetadataVisible) => {
     setKanbanMetadataVisible(key, !kanbanMetadataVisible[key]);
@@ -225,6 +225,7 @@ export default function KanbanBoard({
           </div>
         ) : (
           <DndContext
+          data-testid="dnd-context"
             sensors={sensors}
             collisionDetection={closestCorners}
             onDragStart={handleDragStart}
@@ -251,7 +252,7 @@ export default function KanbanBoard({
             </div>
 
             {createPortal(
-              <DragOverlay>
+              <DragOverlay data-testid="drag-overlay">
                 {activeId && activeDeal ? (
                   <DealCard
                     deal={activeDeal}
@@ -346,7 +347,7 @@ function StageColumn({
   isDeleting: { [id: number]: boolean };
 }) {
   const { setNodeRef } = useDroppable({
-    id: stage, 
+    id: stage,
     data: {
       type: "Column",
       stage,
@@ -367,7 +368,7 @@ function StageColumn({
         </div>
       </div>
 
-      <SortableContext items={deals.map((d) => String(d.id))} strategy={verticalListSortingStrategy}>
+      <SortableContext data-testid="sortable-context" items={deals.map((d) => String(d.id))} strategy={verticalListSortingStrategy}>
         <div className="space-y-3 min-h-[200px]">
           {deals.map((deal) => (
             <DealCard
@@ -483,12 +484,11 @@ function DealCard({
       ref={setNodeRef}
       style={style}
       {...attributes}
-        {...listeners}
-      className={`bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-200 ${
-        isDragging ? 'opacity-50 scale-105' : 'opacity-100'
-      }`}
+      {...listeners}
+      className={`bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-200 ${isDragging ? 'opacity-50 scale-105' : 'opacity-100'
+        }`}
     >
-      
+
       <DealContent
         deal={deal}
         metadataVisible={metadataVisible}
@@ -561,18 +561,21 @@ function DealContent({
             {showActionsDropdown === deal.id && (
               <div className="absolute right-0 top-full mt-2 w-28 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20">
                 <button
+                  aria-label="View"
                   onClick={onView}
                   className="block w-full text-left px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg"
                 >
                   View
                 </button>
                 <button
+                aria-label="Edit"
                   onClick={onEdit}
                   className="block w-full text-left px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   Edit
                 </button>
                 <button
+                aria-label="Delete"
                   onClick={(e) => {
                     handleButtonClick(e);
                     setConfirmDeleteId(deal.id);

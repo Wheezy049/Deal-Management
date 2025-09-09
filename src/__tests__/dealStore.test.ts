@@ -104,8 +104,8 @@ describe("Deal store", () => {
         };
     useDealStore.setState({ deals: [existingDeal] });
 
-    const updated = { id: 1, clientName: "New Deal Updated" };
-    mockedAxios.patch.mockResolvedValueOnce({ data: updated });
+    const updated = { clientName: "New Deal Updated" };
+    mockedAxios.put.mockResolvedValueOnce({ data: updated });
 
     const { updateDeal } = useDealStore.getState();
 

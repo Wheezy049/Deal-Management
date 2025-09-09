@@ -79,3 +79,4 @@ export type Entity = {
   type: "client" | "product";
   name: string;
 };
+

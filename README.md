@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vobb OS - Atlas Module: Deal Management Interface
 
-## Getting Started
+A fully functional **deal management interface** for Vobb OS’s Atlas module. Agents can view, create, and manage deals using **Tabular View** or **Kanban View**, with features like drag-and-drop, customizable views, search/sort/filter, dark mode, and full mobile responsiveness.
 
-First, run the development server:
+---
 
+## **Demo / Hosted Link**
+
+[https://vobb-deal-management.vercel.app/](https://vobb-deal-management.vercel.app/)
+
+---
+
+## **Tech Stack**
+
+- **Frontend:** React.js with TypeScript  
+- **State Management:** Zustand  
+- **Styling:** Tailwind CSS  
+- **Testing:** Jest & React Testing Library  
+- **API Simulation:** MockAPI (hosted online)
+
+---
+
+## **Features**
+
+### Core Features
+
+1. **Navigation**
+    - Navbar with links: Deals, Settings, Profile.
+
+2. **Deal List Views**
+    - **Tabular View**
+        - Columns: Client Name, Product Name, Deal Stage/Status, Created Date, Actions (View/Edit/Delete)
+        - Toggle visibility of table columns (persist across reloads)
+        - Search, sort, and filter functionality
+    - **Kanban View**
+        - Pipeline stages:
+            - Lead Generated, Contacted, Application Submitted, Application Under Review, Deal Finalized, Payment Confirmed, Completed, Lost
+        - Draggable deals between stages
+        - Toggle visibility of metadata (persist across reloads)
+
+3. **Deal Creation Modal**
+    - Required fields: Product, Client, Assigned Stage (default: Lead Generated)
+    - Validation for required fields
+    - New deals appear instantly in the current view
+
+4. **Responsive UI**
+    - Fully mobile responsive
+    - Desktop-ready layout
+
+5. **Dynamic Updates**
+    - Stage changes, edits, and deletions update views immediately
+    - Column visibility and active view persist across reloads
+
+6. **Dark Mode**
+    - Toggle between light and dark themes
+
+7. **State Management**
+    - Zustand used to manage deals, current view, active deal, and user preferences
+
+8. **API Simulation**
+    - MockAPI for fetching, creating, updating, and deleting deals, products, and clients
+    - Proper loading and error handling implemented
+
+9. **Testing**
+    - Unit and integration tests with Jest and React Testing Library
+
+---
+
+## **Setup Instructions**
+
+1. **Clone the repository**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Wheezy049/Vobb-Deal-Management
+cd vobb-deal-management
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Install Dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Start the application
+```bash
+npm run dev   # using nodemon for development
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Run tests
+```bash
+npm test
+```
