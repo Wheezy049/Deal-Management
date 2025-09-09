@@ -50,7 +50,7 @@ function Deal() {
 
                 <button
                     onClick={() => setIsCreatOpen(true)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-5 py-2 rounded-lg shadow-md transition-colors duration-200"
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-5 py-4 rounded-lg shadow-md transition-colors duration-200"
                 >
                     + Add New Deal
                 </button>

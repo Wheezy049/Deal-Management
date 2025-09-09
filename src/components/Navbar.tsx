@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Moon, Sun, AlignJustify, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 function Sidebar() {
     const [darkMode, setDarkMode] = useState(false);
@@ -38,14 +39,21 @@ function Sidebar() {
     return (
         <>
             {/* Sidebar for desktop */}
-            <aside className="hidden md:flex fixed top-0 left-0 h-screen w-64 bg-gray-100 dark:bg-gray-900 text-black dark:text-white shadow-lg flex-col z-50">
+            <aside className="hidden md:flex fixed top-0 left-0 h-screen w-52 bg-gray-100 dark:bg-gray-900 text-black dark:text-white shadow-lg flex-col z-50">
                 <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-                    <h1 className="text-xl font-bold">
-                        <Link href="/">VobbsCRM</Link>
-                    </h1>
+                    <span>
+                        {
+                            darkMode ? (
+                                <Image src='/vobb-light.png' alt="logo" width={150} height={150} />
+                            ) : (
+                                <Image src='/vobb-dark.png' alt="logo" width={150} height={150} />
+                            )
+                        }
+
+                    </span>
                     <button
                         onClick={toggleDarkMode}
-                        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 transition-colors"
                         aria-label="Toggle dark mode"
                     >
                         {darkMode ? (
@@ -69,10 +77,17 @@ function Sidebar() {
 
             {/* Mobile Top Bar */}
             <div className="flex md:hidden fixed top-0 left-0 w-full bg-gray-100 dark:bg-gray-900 text-black dark:text-white p-4 shadow-md justify-between items-center z-50">
-                <h1 className="text-lg font-bold">
-                    <Link href="/">Deal Management</Link>
-                </h1>
-                <div className="flex items-center gap-4">
+                <span>
+                    {
+                        darkMode ? (
+                            <Image src='/vobb-light.png' alt="logo" width={150} height={150} />
+                        ) : (
+                            <Image src='/vobb-dark.png' alt="logo" width={150} height={150} />
+                        )
+                    }
+
+                </span>
+                <div className="flex items-center gap-1">
                     <button
                         onClick={toggleDarkMode}
                         className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
@@ -96,13 +111,20 @@ function Sidebar() {
 
             {/* Mobile Sidebar */}
             <div
-                className={`fixed top-0 left-0 h-screen w-64 bg-gray-100 dark:bg-gray-900 text-black dark:text-white shadow-lg transform ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
+                className={`fixed top-0 left-0 h-screen w-52 bg-gray-100 dark:bg-gray-900 text-black dark:text-white shadow-lg transform ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
                     } transition-transform duration-300 ease-in-out z-40 md:hidden`}
             >
                 <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-                    <h1 className="text-xl font-bold">
-                        <Link href="/">Deal Management</Link>
-                    </h1>
+                    <span>
+                        {
+                            darkMode ? (
+                                <Image src='/vobb-light.png' alt="logo" width={150} height={150} />
+                            ) : (
+                                <Image src='/vobb-dark.png' alt="logo" width={150} height={150} />
+                            )
+                        }
+
+                    </span>
                     <button
                         onClick={() => setIsMenuOpen(false)}
                         className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors"
