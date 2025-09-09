@@ -20,6 +20,7 @@ export const useDealStore = create<DealState>((set) => ({
         clientName: true,
         productName: true,
         createdAt: true,
+        description: false,
     },
     setKanbanMetadataVisible: (key: keyof MetadataVisible, value: boolean) =>
         set((state) => ({
