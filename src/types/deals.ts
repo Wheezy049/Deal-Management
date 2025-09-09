@@ -22,6 +22,7 @@ export type MetadataVisible = {
     clientName: boolean;
     productName: boolean;
     createdAt: boolean;
+    description: boolean;
 };
 
 export type DealState = {
@@ -70,6 +71,7 @@ export type ColumnVisibility = {
     stage: boolean;
     createdAt: boolean;
     actions: boolean;
+    description: boolean;
 };
 
 export type Entity = {

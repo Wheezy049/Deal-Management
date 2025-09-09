@@ -59,7 +59,7 @@ function Navbar() {
     )}
         <nav
             className={`${scrolling ? 'fixed shadow-md shadow-black/10 top-0' : 'relative'
-                } w-full bg-gray-100 shadow-sm text-center transition-all duration-500 text-black dark:bg-gray-900 dark:text-white px-4 md:px-20 py-4 md:py-6 `}
+                } w-full bg-gray-100 shadow-sm text-center transition-all duration-500 text-black dark:bg-gray-900 dark:text-white px-4 md:px-20 py-4 md:py-6 z-50 `}
         >
             {/* desktop view */}
             <div className="max-w-[1200px] flex justify-between w-full items-center mx-auto">
