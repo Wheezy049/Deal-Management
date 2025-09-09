@@ -4,7 +4,7 @@ A fully functional **deal management interface** for Vobb OS’s Atlas module. A
 
 ---
 
-## **Demo / Hosted Link**
+## **Hosted Link**
 
 [https://vobb-deal-management.vercel.app/](https://vobb-deal-management.vercel.app/)
 
@@ -81,10 +81,13 @@ npm install
 
 ## Start the application
 ```bash
-npm run dev   # using nodemon for development
+npm run dev 
 ```
 
 ## Run tests
 ```bash
 npm test
 ```
+
+## Author
+✍️ devfaruq
