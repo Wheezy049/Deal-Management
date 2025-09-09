@@ -24,6 +24,7 @@ describe("Deal store", () => {
                 clientName: true,
                 productName: true,
                 createdAt: true,
+                description: false,
             },
         });
         jest.clearAllMocks();
