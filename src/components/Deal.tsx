@@ -7,6 +7,7 @@ import UpdateDealModal from './UpdateDealModal';
 import type { Deal } from '@/types/deals';
 import ViewDealModal from './ViewDealModal';
 import { useDealStore } from '@/store/useDealStore';
+import { KanbanSquare, LayoutGrid } from 'lucide-react';
 
 function Deal() {
     const [isCreatOpen, setIsCreatOpen] = useState(false);
@@ -23,7 +24,7 @@ function Deal() {
     }, [setCurrentView]);
 
     return (
-        <div>
+        <div className="w-full overflow-x-hidden">
             <div className="w-full flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
                 {/* Toggle buttons */}
                 <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-2 flex flex-row items-stretch sm:items-center shadow-sm gap-2">
@@ -34,7 +35,7 @@ function Deal() {
                             }`}
                         onClick={() => setCurrentView("table")}
                     >
-                        Table
+                         <LayoutGrid className='w-5 h-5' />
                     </button>
                     <button
                         className={`px-4 py-2 rounded-lg sm:rounded-r-lg transition-colors duration-200 ${currentView === "kanban"
@@ -43,7 +44,7 @@ function Deal() {
                             }`}
                         onClick={() => setCurrentView("kanban")}
                     >
-                        Kanban
+                        <KanbanSquare className='w-5 h-5' />
                     </button>
                 </div>
 

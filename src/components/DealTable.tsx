@@ -74,9 +74,13 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
 
   // deals filter based on search query
   const filteredDeals = useMemo(() => {
-    if (!searchQuery.trim()) return deals;
+    const sorted = [...deals].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
-    return deals.filter(deal =>
+    if (!searchQuery.trim()) return sorted;
+
+    return sorted.filter(deal =>
       deal.clientName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       deal.productName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       deal.stage?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -167,7 +171,8 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
   );
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+    <div className=''>
+    <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 w-full">
       {/* Header */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -345,12 +350,12 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              <div className="flex items-center justify-between">
+            <div className=" px-2 sm:px-6 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-x-auto">
+              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-0 sm:justify-between">
                 <div className="text-sm text-gray-700 dark:text-gray-300">
                   Showing {((currentPage - 1) * rowsPerPage) + 1} - {Math.min(currentPage * rowsPerPage, filteredDeals.length)} of {filteredDeals.length}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <button
                     onClick={() => goToPage(currentPage - 1)}
                     disabled={currentPage === 1}
@@ -416,6 +421,7 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
           onClick={() => setShowActionsDropdown(null)}
         />
       )}
+    </div>
     </div>
   );
 }
