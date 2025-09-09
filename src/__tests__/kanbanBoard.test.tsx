@@ -15,11 +15,10 @@ jest.mock("@dnd-kit/sortable", () => ({
     transition: null,
     isDragging: false,
   })),
-  SortableContext: ({ children }: React.PropsWithChildren<object>) => <div>{children}</div>,
+  SortableContext: ({ children, ...props }: React.PropsWithChildren<object>) => <div {...props}>{children}</div>,
   verticalListSortingStrategy: jest.fn(),
 }));
 
-// Mock DnD modules
 jest.mock("@dnd-kit/core", () => ({
   DndContext: ({ children, ...props }: React.PropsWithChildren<object>) => <div {...props}>{children}</div>,
   DragOverlay: ({ children, ...props }: React.PropsWithChildren<object>) => <div {...props}>{children}</div>,
@@ -30,7 +29,6 @@ jest.mock("@dnd-kit/core", () => ({
   useSensors: jest.fn((...sensors) => sensors),
   closestCorners: jest.fn(),
 }));
-
 
 jest.mock("@dnd-kit/utilities", () => ({
   CSS: { Transform: { toString: jest.fn(() => "") } },
@@ -55,8 +53,6 @@ jest.mock('@/store/useDealStore', () => {
   };
 });
 
-
-
 const mockUseDealStore = useDealStore as jest.MockedFunction<typeof useDealStore>;
 mockUseDealStore.setState = jest.fn();
 
@@ -80,7 +76,6 @@ describe("KanbanBoard Integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // LocalStorage mock
     Object.defineProperty(window, "localStorage", { value: { getItem: jest.fn(), setItem: jest.fn() }, writable: true });
     Object.defineProperty(window, "confirm", { value: jest.fn(() => true), writable: true });
 
@@ -99,7 +94,6 @@ describe("KanbanBoard Integration", () => {
 
   it("renders all stage columns and their deals", () => {
     render(<KanbanBoard setIsUpdateOpen={setIsUpdateOpen} setIsViewOpen={setIsViewOpen} setSelectedDeal={setSelectedDeal} />);
-
     const stages = [
       "Lead Generated",
       "Contacted",
@@ -110,7 +104,6 @@ describe("KanbanBoard Integration", () => {
       "Completed",
       "Lost",
     ];
-
     stages.forEach(stage => expect(screen.getByText(stage)).toBeInTheDocument());
     expect(screen.getByText("Alice")).toBeInTheDocument();
     expect(screen.getByText("Laptop")).toBeInTheDocument();
@@ -129,25 +122,40 @@ describe("KanbanBoard Integration", () => {
 
   it("opens view modal on 'View' click", () => {
     render(<KanbanBoard setIsUpdateOpen={setIsUpdateOpen} setIsViewOpen={setIsViewOpen} setSelectedDeal={setSelectedDeal} />);
-    fireEvent.click(screen.getByLabelText("View"));
-expect(setSelectedDeal).toHaveBeenCalledWith(mockDeals[0]);
-expect(setIsViewOpen).toHaveBeenCalledWith(true);
-
+    fireEvent.click(screen.getAllByRole("button")[0]); 
+    fireEvent.click(screen.getByRole("button", { name: "View" }));
+    expect(setSelectedDeal).toHaveBeenCalledWith(mockDeals[0]);
+    expect(setIsViewOpen).toHaveBeenCalledWith(true);
   });
 
   it("opens edit modal on 'Edit' click", () => {
     render(<KanbanBoard setIsUpdateOpen={setIsUpdateOpen} setIsViewOpen={setIsViewOpen} setSelectedDeal={setSelectedDeal} />);
-    fireEvent.click(screen.getByLabelText("Edit"));
-expect(setSelectedDeal).toHaveBeenCalledWith(mockDeals[0]);
-expect(setIsUpdateOpen).toHaveBeenCalledWith(true);
+    fireEvent.click(screen.getAllByRole("button")[0]);
+    fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+    expect(setSelectedDeal).toHaveBeenCalledWith(mockDeals[0]);
+    expect(setIsUpdateOpen).toHaveBeenCalledWith(true);
   });
 
-  it("handles delete action correctly", () => {
-    render(<KanbanBoard setIsUpdateOpen={setIsUpdateOpen} setIsViewOpen={setIsViewOpen} setSelectedDeal={setSelectedDeal} />);
-    fireEvent.click(screen.getAllByText("Delete")[0]);
-    fireEvent.click(screen.getByLabelText("Delete"));
-expect(mockDeleteDeal).toHaveBeenCalledWith(mockDeals[0].id);
-  });
+ test("handles delete action correctly", async () => {
+  render(
+    <KanbanBoard
+      setIsUpdateOpen={jest.fn()}
+      setIsViewOpen={jest.fn()}
+      setSelectedDeal={jest.fn()}
+    />
+  );
+
+  const moreButtons = screen.getAllByRole("button", { name: "" });
+  fireEvent.click(moreButtons[0]);
+
+  const deleteButton = await screen.findByRole("button", { name: "Delete" });
+  fireEvent.click(deleteButton);
+
+  const confirmButton = screen.getByRole("button", { name: "Delete" });
+  fireEvent.click(confirmButton);
+
+  expect(mockDeleteDeal).toHaveBeenCalledWith(mockDeals[0].id);
+});
 
   it("renders drag and sortable contexts and overlay", () => {
     render(<KanbanBoard setIsUpdateOpen={setIsUpdateOpen} setIsViewOpen={setIsViewOpen} setSelectedDeal={setSelectedDeal} />);
