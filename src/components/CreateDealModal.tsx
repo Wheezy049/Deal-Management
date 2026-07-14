@@ -1,5 +1,5 @@
 import { useDealStore } from '@/store/useDealStore';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import type { DealFormState, Props } from '@/types/deals';
 
 function CreateDealModal({ isOpen, onClose }: Props) {
@@ -12,14 +12,6 @@ function CreateDealModal({ isOpen, onClose }: Props) {
         createdAt: new Date().toISOString(),
         description: ""
     })
-
-    // fetch clients and products on mount
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         await fetchEntities();
-    //     };
-    //     fetchData();
-    // }, []);
 
     // handle form field changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within, act, waitFor } from "@testing-library/react";
 import { useDealStore } from "@/store/useDealStore";
 import KanbanBoard from "../components/KanbanBoard";
 import type { Deal, MetadataVisible } from "@/types/deals";
@@ -65,7 +65,7 @@ const mockDeals: Deal[] = [
 
 const mockMetadataVisible: MetadataVisible = { clientName: true, productName: true, createdAt: true, description: false };
 const mockUpdateDeal = jest.fn();
-const mockDeleteDeal = jest.fn();
+const mockDeleteDeal = jest.fn(() => Promise.resolve());
 const mockSetKanbanMetadataVisible = jest.fn();
 
 describe("KanbanBoard Integration", () => {
@@ -115,28 +115,43 @@ describe("KanbanBoard Integration", () => {
 
   it("toggles metadata visibility via checkbox", () => {
     render(<KanbanBoard setIsUpdateOpen={setIsUpdateOpen} setIsViewOpen={setIsViewOpen} setSelectedDeal={setSelectedDeal} />);
-    const toggleCheckbox = screen.getAllByRole("checkbox")[0];
-    fireEvent.click(toggleCheckbox);
+
+    const columnButton = screen.getByRole('button', { name: /column/i});
+    fireEvent.click(columnButton);
+
+    const toggleCheckbox = screen.getAllByRole("checkbox");
+    fireEvent.click(toggleCheckbox[0]);
+
     expect(mockSetKanbanMetadataVisible).toHaveBeenCalled();
   });
 
   it("opens view modal on 'View' click", () => {
     render(<KanbanBoard setIsUpdateOpen={setIsUpdateOpen} setIsViewOpen={setIsViewOpen} setSelectedDeal={setSelectedDeal} />);
-    fireEvent.click(screen.getAllByRole("button")[0]); 
-    fireEvent.click(screen.getByRole("button", { name: "View" }));
+    const moreButton = screen.getAllByRole('button', { name: /more vertical/i});
+    fireEvent.click(moreButton[0]); 
+
+    const viewButton = screen.getByRole("button", { name: /View/i});
+    fireEvent.click(viewButton);
+
     expect(setSelectedDeal).toHaveBeenCalledWith(mockDeals[0]);
     expect(setIsViewOpen).toHaveBeenCalledWith(true);
   });
 
   it("opens edit modal on 'Edit' click", () => {
     render(<KanbanBoard setIsUpdateOpen={setIsUpdateOpen} setIsViewOpen={setIsViewOpen} setSelectedDeal={setSelectedDeal} />);
-    fireEvent.click(screen.getAllByRole("button")[0]);
-    fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+    const moreButtons = screen.getAllByRole("button", {name: /more vertical/i});
+    fireEvent.click(moreButtons[0]);
+
+    const editButton = screen.getByRole("button", { name: /Edit/i});
+    fireEvent.click(editButton);
+
     expect(setSelectedDeal).toHaveBeenCalledWith(mockDeals[0]);
     expect(setIsUpdateOpen).toHaveBeenCalledWith(true);
   });
 
- test("handles delete action correctly", async () => {
+ it("handles delete action correctly", async () => {
+  jest.useFakeTimers();
+
   render(
     <KanbanBoard
       setIsUpdateOpen={jest.fn()}
@@ -145,16 +160,30 @@ describe("KanbanBoard Integration", () => {
     />
   );
 
-  const moreButtons = screen.getAllByRole("button", { name: "" });
+  const moreButtons = screen.getAllByRole("button", { name: /more vertical/i });
   fireEvent.click(moreButtons[0]);
 
-  const deleteButton = await screen.findByRole("button", { name: "Delete" });
-  fireEvent.click(deleteButton);
 
-  const confirmButton = screen.getByRole("button", { name: "Delete" });
+  fireEvent.click(screen.getByText("Delete"));
+
+  const modal = screen.getByRole("dialog");
+  expect(modal).toBeInTheDocument();
+
+  const confirmButton = within(modal).getByText("Delete");
   fireEvent.click(confirmButton);
 
-  expect(mockDeleteDeal).toHaveBeenCalledWith(mockDeals[0].id);
+  act(() => {
+      expect(screen.getByText("Deleting...")).toBeInTheDocument();
+      jest.advanceTimersByTime(1000)
+  });
+
+    await waitFor(() => {
+    expect(mockDeleteDeal).toHaveBeenCalledWith(mockDeals[0].id);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  jest.useRealTimers();
+
 });
 
   it("renders drag and sortable contexts and overlay", () => {

@@ -181,6 +181,7 @@ export default function KanbanBoard({
             {/* Columns Dropdown */}
             <div className="relative">
               <button
+              aria-label="column"
                 onClick={() => setShowSettingsDropdown(!showSettingsDropdown)}
                 className="flex items-center justify-center gap-2 w-full sm:w-auto px-3 py-2 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
               >
@@ -196,6 +197,7 @@ export default function KanbanBoard({
                       {Object.keys(kanbanMetadataVisible).map((key) => (
                         <label key={key} className="flex items-center gap-2 cursor-pointer">
                           <input
+                           aria-label="checkbox"
                             type="checkbox"
                             checked={kanbanMetadataVisible[key as keyof MetadataVisible]}
                             onChange={() => toggleMetadata(key as keyof MetadataVisible)}
@@ -365,7 +367,7 @@ function StageColumn({
           <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full text-xs font-medium">
             {deals.length}
           </span>
-        </div>
+        </div>  
       </div>
 
       <SortableContext data-testid="sortable-context" items={deals.map((d) => String(d.id))} strategy={verticalListSortingStrategy}>
@@ -549,6 +551,7 @@ function DealContent({
         {!isDragOverlay && (
           <div className="relative">
             <button
+              aria-label="more vertical"
               onClick={(e) => {
                 handleButtonClick(e);
                 setShowActionsDropdown(showActionsDropdown === deal.id ? null : deal.id);
