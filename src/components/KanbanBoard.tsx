@@ -177,7 +177,6 @@ export default function KanbanBoard({
                 className="w-full sm:w-64 pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
-
             {/* Columns Dropdown */}
             <div className="relative">
               <button
@@ -188,7 +187,6 @@ export default function KanbanBoard({
                 <Columns className="w-4 h-4" />
                 <span className="sm:inline">Columns</span>
               </button>
-
               {showSettingsDropdown && (
                 <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
                   <div className="p-3">
@@ -216,7 +214,6 @@ export default function KanbanBoard({
           </div>
         </div>
       </div>
-
       {/* Kanban Board Content */}
       <div className="p-4">
         {filteredDeals.length === 0 ? (
@@ -252,7 +249,6 @@ export default function KanbanBoard({
                 />
               ))}
             </div>
-
             {createPortal(
               <DragOverlay data-testid="drag-overlay">
                 {activeId && activeDeal ? (
@@ -276,7 +272,6 @@ export default function KanbanBoard({
           </DndContext>
         )}
       </div>
-
       {/* Delete Confirmation Modal */}
       {confirmDeleteId !== null && (
         <div role='dialog' aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
@@ -356,20 +351,31 @@ function StageColumn({
     },
   });
 
+  const columnTotal = deals.reduce((acc, deal) => acc + (deal.amount || 0), 0);
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0
+    }).format(val);
+  };
+
   return (
     <div
       ref={setNodeRef}
       className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg min-w-[280px] flex-shrink-0 border border-gray-200 dark:border-gray-600"
     >
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <h2 className="font-semibold text-gray-900 dark:text-white text-sm">{stage}</h2>
-          <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full text-xs font-medium">
-            {deals.length}
+        <div className="flex flex-col gap-0.5">
+          <h2 className="font-bold text-gray-900 dark:text-white text-sm">{stage}</h2>
+          <span className="text-xs font-semibold text-blue-600 dark:text-blue-400">
+            {formatCurrency(columnTotal)}
           </span>
         </div>  
+        <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-1 rounded-full text-xs font-semibold">
+          {deals.length}
+        </span>
       </div>
-
       <SortableContext data-testid="sortable-context" items={deals.map((d) => String(d.id))} strategy={verticalListSortingStrategy}>
         <div className="space-y-3 min-h-[200px]">
           {deals.map((deal) => (
@@ -490,7 +496,6 @@ function DealCard({
       className={`bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 hover:shadow-md transition-all duration-200 ${isDragging ? 'opacity-50 scale-105' : 'opacity-100'
         }`}
     >
-
       <DealContent
         deal={deal}
         metadataVisible={metadataVisible}
@@ -547,7 +552,6 @@ function DealContent({
             <p className="text-gray-700 dark:text-gray-300 text-sm">{deal.productName}</p>
           )}
         </div>
-
         {!isDragOverlay && (
           <div className="relative">
             <button
@@ -560,7 +564,6 @@ function DealContent({
             >
               <MoreVertical className="w-4 h-4" />
             </button>
-
             {showActionsDropdown === deal.id && (
               <div className="absolute right-0 top-full mt-2 w-28 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20">
                 <button
@@ -593,17 +596,21 @@ function DealContent({
           </div>
         )}
       </div>
-
       {/* Description & Created At */}
       <div className="flex flex-col gap-1">
         {metadataVisible.description && deal.description && (
           <p className="text-gray-600 dark:text-gray-400 text-xs line-clamp-2">{deal.description}</p>
         )}
-        {metadataVisible.createdAt && (
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {new Date(deal.createdAt).toLocaleDateString()}
-          </p>
-        )}
+        <div className="flex items-center justify-between mt-1 pt-1 border-t border-gray-100 dark:border-gray-700/50">
+          <span className="text-xs font-bold text-gray-900 dark:text-white">
+            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(deal.amount || 0)}
+          </span>
+          {metadataVisible.createdAt && (
+            <p className="text-[10px] text-gray-500 dark:text-gray-400">
+              {new Date(deal.createdAt).toLocaleDateString()}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

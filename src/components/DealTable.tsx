@@ -23,6 +23,7 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
     productName: true,
     stage: true,
     description: false,
+    amount: true,
     createdAt: true,
     actions: true,
   });
@@ -32,6 +33,7 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
     "productName",
     "stage",
     "description",
+    "amount",
     "createdAt",
     "actions",
   ];
@@ -41,6 +43,7 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
     productName: "Product Name",
     stage: "Stage",
     description: "Description",
+    amount: "Value",
     createdAt: "Created At",
     actions: "Actions"
   };
@@ -189,7 +192,6 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
                   className="w-full sm:w-64 pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-
               {/* Columns Dropdown */}
               <div className="relative w-full sm:w-auto">
                 <button
@@ -199,7 +201,6 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
                   <Columns className="w-4 h-4" />
                   <span className="sm:inline">Columns</span>
                 </button>
-
                 {showColumnsDropdown && (
                   <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10">
                     <div className="p-3">
@@ -224,7 +225,6 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
             </div>
           </div>
         </div>
-
         {/* Table */}
         {filteredDeals.length === 0 ? (
           <div className="flex items-center justify-center min-h-[300px]">
@@ -254,6 +254,11 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
                     {columnsVisible.description && (
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         Description
+                      </th>
+                    )}
+                    {columnsVisible.amount && (
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        Value
                       </th>
                     )}
                     {columnsVisible.createdAt && (
@@ -289,6 +294,11 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
                       {columnsVisible.description && (
                         <td className="px-6 py-4 text-sm text-gray-900 dark:text-white max-w-xs truncate">
                           {deal.description || 'No description'}
+                        </td>
+                      )}
+                      {columnsVisible.amount && (
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900 dark:text-white">
+                          {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(deal.amount || 0)}
                         </td>
                       )}
                       {columnsVisible.createdAt && (
@@ -346,9 +356,29 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
                     </tr>
                   ))}
                 </tbody>
+                <tfoot className="bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 font-bold">
+                  <tr>
+                    {columnsVisible.clientName && (
+                      <td className="px-6 py-3 text-sm text-gray-700 dark:text-gray-300">
+                        Total ({filteredDeals.length} Deals)
+                      </td>
+                    )}
+                    {columnsVisible.productName && <td></td>}
+                    {columnsVisible.stage && <td></td>}
+                    {columnsVisible.description && <td></td>}
+                    {columnsVisible.amount && (
+                      <td className="px-6 py-3 text-sm text-blue-600 dark:text-blue-400">
+                        {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(
+                          filteredDeals.reduce((sum, d) => sum + (d.amount || 0), 0)
+                        )}
+                      </td>
+                    )}
+                    {columnsVisible.createdAt && <td></td>}
+                    {columnsVisible.actions && <td></td>}
+                  </tr>
+                </tfoot>
               </table>
             </div>
-
             {/* Pagination */}
             {totalPages > 1 && (
               <div className=" px-2 sm:px-6 py-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-x-auto">
@@ -378,7 +408,6 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
             )}
           </>
         )}
-
         {/* Delete Confirmation Modal */}
         {confirmDeleteId !== null && (
           <div role='dialog' aria-modal="true" className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
@@ -408,7 +437,6 @@ function DealTable({ setIsUpdateOpen, setIsViewOpen, setSelectedDeal }: Props) {
             </div>
           </div>
         )}
-
         {/* Click outside handlers */}
         {showColumnsDropdown && (
           <div

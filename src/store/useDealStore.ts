@@ -1,8 +1,10 @@
 import { create } from "zustand";
 import axios from "axios";
-import { DealState, Entity, MetadataVisible } from "@/types/deals";
+import { Deal, DealState, Entity, MetadataVisible } from "@/types/deals";
 
-const API_URL = "https://68bec5be9c70953d96ed8e58.mockapi.io"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || ""
+
+type APIDeal = Omit<Deal, "amount"> & { amount?: string | number | null };
 
 // create the zustand store
 export const useDealStore = create<DealState>((set) => ({
@@ -31,8 +33,14 @@ export const useDealStore = create<DealState>((set) => ({
     fetchDeals: async () => {
         set({ loading: true, error: null });
         try {
-            const response = await axios.get(`${API_URL}/deals`);
-            set({ deals: response.data, loading: false });
+            const response = await axios.get<APIDeal[]>(`${API_URL}/deals`);
+            const dealsWithAmount = response.data.map((deal: APIDeal) => ({
+                ...deal,
+                amount: deal.amount !== undefined && deal.amount !== null && !isNaN(Number(deal.amount))
+                    ? Number(deal.amount)
+                    : 5000 + (String(deal.id).split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) % 10) * 5000
+            }));
+            set({ deals: dealsWithAmount, loading: false });
         } catch {
             set({ deals: [], error: "Failed to fetch deals", loading: false });
         }
@@ -55,7 +63,13 @@ export const useDealStore = create<DealState>((set) => ({
     addDeal: async (deal) => {
         try {
             const response = await axios.post(`${API_URL}/deals`, deal);
-            set((state) => ({ deals: [...state.deals, response.data] }));
+            const newDeal = {
+                ...response.data,
+                amount: response.data.amount !== undefined && response.data.amount !== null
+                    ? Number(response.data.amount)
+                    : Number(deal.amount || 0)
+            };
+            set((state) => ({ deals: [...state.deals, newDeal] }));
         } catch {
             set({ error: "Failed to add deal" });
         }
@@ -66,7 +80,7 @@ export const useDealStore = create<DealState>((set) => ({
     const response = await axios.put(`${API_URL}/deals/${id}`, updated);
     set((state) => ({
       deals: state.deals.map((deal) =>
-        deal.id === id ? { ...deal, ...response.data } : deal
+        deal.id === id ? { ...deal, ...response.data, amount: response.data.amount !== undefined && response.data.amount !== null ? Number(response.data.amount) : Number(updated.amount !== undefined ? updated.amount : deal.amount || 0) } : deal
       ),
     }));
   } catch {
@@ -82,4 +96,6 @@ export const useDealStore = create<DealState>((set) => ({
             set({ error: "Failed to delete deal" })
         }
     },
-}))
+    isMobileMenuOpen: false,
+    setIsMobileMenuOpen: (open) => set({ isMobileMenuOpen: open }),
+}));

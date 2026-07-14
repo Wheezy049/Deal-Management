@@ -80,7 +80,8 @@ describe("Deal store", () => {
             clientName: "New Deal", 
             productName: "Product A", 
             createdAt: "2024-06-01T00:00:00Z", 
-            stage: "Lead Generated" as Stage 
+            stage: "Lead Generated" as Stage,
+            amount: 15000
         };
         const newDeal = { id: 1, ...newDealInput };
         mockedAxios.post.mockResolvedValueOnce({

@@ -1,13 +1,16 @@
 "use client"
-import React, { useState, useEffect } from "react";
-import { Moon, Sun, AlignJustify, X } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Sun, Moon, User, Settings, Menu, Briefcase, ChevronDown } from "lucide-react";
+import { useDealStore } from "@/store/useDealStore";
 import Link from "next/link";
-import Image from "next/image";
 
-function Sidebar() {
+function Navbar() {
+    const { isMobileMenuOpen, setIsMobileMenuOpen } = useDealStore();
     const [darkMode, setDarkMode] = useState(false);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
+    // Load theme from localStorage on mount
     useEffect(() => {
         const savedTheme = localStorage.getItem("theme");
         if (savedTheme === "dark") {
@@ -19,9 +22,11 @@ function Sidebar() {
         }
     }, []);
 
+    // Toggle theme
     const toggleDarkMode = () => {
-        setDarkMode(!darkMode);
-        if (!darkMode) {
+        const nextMode = !darkMode;
+        setDarkMode(nextMode);
+        if (nextMode) {
             document.documentElement.classList.add("dark");
             localStorage.setItem("theme", "dark");
         } else {
@@ -30,123 +35,99 @@ function Sidebar() {
         }
     };
 
-    const navItems = [
-        { title: "Deals", href: "/" },
-        { title: "Settings", href: "/settings" },
-        { title: "Profile", href: "/profile" },
-    ];
+    // Close dropdown on click outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     return (
-        <>
-            {/* Sidebar for desktop */}
-            <aside className="hidden md:flex fixed top-0 left-0 h-screen w-52 bg-gray-100 dark:bg-gray-900 text-black dark:text-white shadow-lg flex-col z-50">
-                <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-                    <span>
-                        {
-                            darkMode ? (
-                                <Image src='/vobb-light.png' alt="logo" width={150} height={150} />
-                            ) : (
-                                <Image src='/vobb-dark.png' alt="logo" width={150} height={150} />
-                            )
-                        }
-
-                    </span>
+        <header className="sticky top-0 z-40 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 transition-colors py-3 px-4 md:px-8">
+            <div className="max-w-7xl mx-auto flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-850 rounded-lg text-gray-600 dark:text-gray-300 transition-colors"
+                        aria-label="Toggle navigation drawer"
+                    >
+                        <Menu className="w-5 h-5" />
+                    </button>
+                    <Link href="/" className="md:hidden flex items-center gap-2">
+                        <div className="bg-blue-600 text-white p-1 rounded-md">
+                            <Briefcase className="w-4 h-4" />
+                        </div>
+                        <span className="font-bold text-sm tracking-wide bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-300">
+                            VOBB Atlas
+                        </span>
+                    </Link>
+                    <div className="hidden md:block">
+                        <span className="text-gray-400 text-xs font-semibold uppercase tracking-wider block">Workspace</span>
+                        <h2 className="text-sm font-bold text-gray-800 dark:text-gray-200 mt-0.5">
+                            Welcome back, <span className="text-blue-600 dark:text-blue-400">John Doe</span>!
+                        </h2>
+                    </div>
+                </div>
+                <div className="flex items-center gap-3.5">     
                     <button
                         onClick={toggleDarkMode}
-                        className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 transition-colors"
-                        aria-label="Toggle dark mode"
+                        className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-850 transition-colors outline-none"
+                        aria-label="Toggle theme color"
                     >
                         {darkMode ? (
-                            <Sun className="w-5 h-5 text-yellow-500" />
+                            <Sun className="w-5 h-5 text-yellow-500 animate-spin-slow" />
                         ) : (
                             <Moon className="w-5 h-5" />
                         )}
                     </button>
-                </div>
-                <ul className="flex-1 mt-6 space-y-4 px-4">
-                    {navItems.map((item, index) => (
-                        <li
-                            key={index}
-                            className="hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg px-3 py-2 transition-colors"
+                    {/* Profile Dropdown Container */}
+                    <div className="relative" ref={dropdownRef}>
+                        <button
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                            className="flex items-center gap-1.5 focus:outline-none p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-850 transition-colors"
+                            aria-label="User profile options"
                         >
-                            <Link href={item.href}>{item.title}</Link>
-                        </li>
-                    ))}
-                </ul>
-            </aside>
-
-            {/* Mobile Top Bar */}
-            <div className="flex md:hidden fixed top-0 left-0 w-full bg-gray-100 dark:bg-gray-900 text-black dark:text-white p-4 shadow-md justify-between items-center z-50">
-                <span>
-                    {
-                        darkMode ? (
-                            <Image src='/vobb-light.png' alt="logo" width={150} height={150} />
-                        ) : (
-                            <Image src='/vobb-dark.png' alt="logo" width={150} height={150} />
-                        )
-                    }
-
-                </span>
-                <div className="flex items-center gap-1">
-                    <button
-                        onClick={toggleDarkMode}
-                        className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
-                        aria-label="Toggle dark mode"
-                    >
-                        {darkMode ? (
-                            <Sun className="w-5 h-5 text-yellow-500" />
-                        ) : (
-                            <Moon className="w-5 h-5" />
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-sm select-none">
+                                JD
+                            </div>
+                            <ChevronDown className="w-4 h-4 text-gray-400 hidden sm:block" />
+                        </button>
+                        {/* Dropdown Menu Panel */}
+                        {isDropdownOpen && (
+                            <div className="absolute right-0 mt-2.5 w-56 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl shadow-xl z-50 overflow-hidden text-sm animate-in fade-in slide-in-from-top-3 duration-155">
+                                <div className="p-4 bg-gray-50/50 dark:bg-gray-850/50 border-b border-gray-100 dark:border-gray-800">
+                                    <span className="font-bold text-gray-900 dark:text-white block capitalize">John Doe</span>
+                                    <span className="text-xs text-gray-400 dark:text-white block truncate mt-0.5">johndoe@gmail.com</span>
+                                </div>
+                                <div className="p-1.5 space-y-0.5">
+                                    <Link 
+                                        href="/profile" 
+                                        onClick={() => setIsDropdownOpen(false)}
+                                        className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-850 transition-colors text-left"
+                                    >
+                                        <User className="w-4 h-4 text-gray-400" />
+                                        <span>View Profile</span>
+                                    </Link>
+                                    <Link 
+                                        href="/settings" 
+                                        onClick={() => setIsDropdownOpen(false)}
+                                        className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-850 transition-colors text-left"
+                                    >
+                                        <Settings className="w-4 h-4 text-gray-400" />
+                                        <span>Settings</span>
+                                    </Link>
+                                </div>
+                            </div>
                         )}
-                    </button>
-                    <button
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                        aria-label="Toggle menu"
-                    >
-                        {isMenuOpen ? <X className="w-6 h-6" /> : <AlignJustify className="w-6 h-6" />}
-                    </button>
+                    </div>
                 </div>
             </div>
-
-            {/* Mobile Sidebar */}
-            <div
-                className={`fixed top-0 left-0 h-screen w-52 bg-gray-100 dark:bg-gray-900 text-black dark:text-white shadow-lg transform ${isMenuOpen ? "translate-x-0" : "-translate-x-full"
-                    } transition-transform duration-300 ease-in-out z-40 md:hidden`}
-            >
-                <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
-                    <span>
-                        {
-                            darkMode ? (
-                                <Image src='/vobb-light.png' alt="logo" width={150} height={150} />
-                            ) : (
-                                <Image src='/vobb-dark.png' alt="logo" width={150} height={150} />
-                            )
-                        }
-
-                    </span>
-                    <button
-                        onClick={() => setIsMenuOpen(false)}
-                        className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                    >
-                        <X className="w-6 h-6" />
-                    </button>
-                </div>
-                <ul className="mt-6 space-y-4 px-4">
-                    {navItems.map((item, index) => (
-                        <li
-                            key={index}
-                            className="hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg px-3 py-2 transition-colors"
-                        >
-                            <Link href={item.href} onClick={() => setIsMenuOpen(false)}>
-                                {item.title}
-                            </Link>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        </>
+        </header>
     );
 }
 
-export default Sidebar;
+export default Navbar;

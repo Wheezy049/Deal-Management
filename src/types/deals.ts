@@ -16,6 +16,7 @@ export type Deal = {
     stage: Stage;
     description?: string;
     createdAt: string;
+    amount?: number;
 }
 
 export type MetadataVisible = {
@@ -40,6 +41,8 @@ export type DealState = {
     setCurrentView: (view: 'table' | 'kanban') => void;
     kanbanMetadataVisible: MetadataVisible;
     setKanbanMetadataVisible: (key: keyof MetadataVisible, value: boolean) => void;
+    isMobileMenuOpen: boolean;
+    setIsMobileMenuOpen: (open: boolean) => void;
 }
 
 export type DealFormState = {
@@ -48,6 +51,7 @@ export type DealFormState = {
     stage: Stage;
     createdAt: string;
     description?: string;
+    amount?: number;
 }
 
 export type Props = {
@@ -72,6 +76,7 @@ export type ColumnVisibility = {
     createdAt: boolean;
     actions: boolean;
     description: boolean;
+    amount: boolean;
 };
 
 export type Entity = {
