@@ -10,7 +10,6 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
-  Legend, 
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -231,7 +230,12 @@ function AnalyticsDashboard() {
                         tickFormatter={(tick) => `$${tick / 1000}k`}
                       />
                       <Tooltip 
-                        formatter={(value: any) => [formatCurrency(Number(value)), 'Total Pipeline']}
+                        formatter={(value) => {
+                          if (typeof value === 'string' || typeof value === 'number') {
+                            return [formatCurrency(Number(value)), 'Total Pipeline'];
+                          }
+                          return '';
+                        }}
                         contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }}
                       />
                       <Bar dataKey="Value" radius={[4, 4, 0, 0]}>
@@ -271,7 +275,7 @@ function AnalyticsDashboard() {
                               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                             ))}
                           </Pie>
-                          <Tooltip formatter={(value: any) => formatCurrency(Number(value))} />
+                          <Tooltip formatter={(value) => value !== undefined && value !== null ? formatCurrency(Number(value)) : ''} />
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
