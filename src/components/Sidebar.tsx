@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import { Briefcase, X, LayoutGrid, BarChart2, Settings, User } from "lucide-react";
+import { Briefcase, X, LayoutGrid, BarChart2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useDealStore } from "@/store/useDealStore";
@@ -12,8 +12,6 @@ function Sidebar() {
     const navItems = [
         { title: "Deals", href: "/", icon: LayoutGrid },
         { title: "Analytics", href: "/analytics", icon: BarChart2 },
-        { title: "Settings", href: "/settings", icon: Settings },
-        { title: "Profile", href: "/profile", icon: User },
     ];
 
     return (
